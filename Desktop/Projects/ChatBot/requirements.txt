@@ -4,3 +4,4 @@ streamlit_lottie
 transformers
 accelerate
 bitsandbytes
+ctransformers
