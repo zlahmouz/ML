@@ -1,5 +1,7 @@
 torch
 streamlit
+streamlit_lottie
 transformers
 sqlite3==3.45.1
 accelerate
+bitsandbytes
