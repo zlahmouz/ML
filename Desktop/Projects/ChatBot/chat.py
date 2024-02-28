@@ -103,7 +103,7 @@ if choice=="login":
             </form>
             """
             st.markdown(contact_form, unsafe_allow_html=True)
-            local_css("/content/style.css")
+            local_css("style.css")
 
             # Add logout button to the sidebar
             
