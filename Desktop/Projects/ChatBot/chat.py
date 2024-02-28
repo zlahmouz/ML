@@ -1,10 +1,8 @@
 import streamlit as st
-from openai import OpenAI
 import requests
 from streamlit_lottie import st_lottie
 import pickle
 from pathlib import Path
-import streamlit_authenticator as stauth
 import hashlib
 
 # DB Management
@@ -113,8 +111,6 @@ if choice=="login":
                 # Add logout logic here (e.g., redirect to login page, clear session data, etc.)
             #authenticator.logout("Logout","sidebar")
         import streamlit as st
-        import os
-        from ctransformers import AutoModelForCausalLM
         model_name = "NousResearch/Llama-2-7b-chat-hf"
         import torch
         from transformers import (
