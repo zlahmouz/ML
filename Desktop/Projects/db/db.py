@@ -4,10 +4,10 @@ import psycopg2
 # Fonction pour se connecter à la base de données PostgreSQL
 def connect_db():
     conn = psycopg2.connect(
-        dbname="postgres",
-        user="postgres",
-        password="azert12345AB+",
-        host="zlahmouz"
+        dbname="wxcqkqvn",
+        user="wxcqkqvn",
+        password="1MmU3atbUECYw4sp3Aq21Xu417JJN9HU",
+        host="flora.db.elephantsql.com"
     )
     return conn
 
