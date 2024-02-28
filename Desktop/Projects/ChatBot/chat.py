@@ -73,7 +73,7 @@ if choice=="login":
   #if authentication_status ==False:
   # st.error("erreur username/password")
 
-  username=st.sidebar.text_input("username",type="email")
+  username=st.sidebar.text_input("username")
   password=st.sidebar.text_input("password",type="password")
   if st.sidebar.checkbox("login"):
     create_usertable()
