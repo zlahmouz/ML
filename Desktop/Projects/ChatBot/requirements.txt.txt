@@ -1,5 +1,0 @@
-torch
-streamlit
-transformers
-sqlite3
-accelerate
