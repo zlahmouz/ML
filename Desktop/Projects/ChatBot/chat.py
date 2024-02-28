@@ -1,3 +1,4 @@
+#https://u3sswjvurlqjnc9g5fwzy5.streamlit.app/
 import streamlit as st
 import requests
 from streamlit_lottie import st_lottie
@@ -134,7 +135,6 @@ if choice=="login":
             model_name,
             quantization_config=bnb_config,
             # use the gpu
-            device_map={"": 0}
         )
 
         # don't use the cache
