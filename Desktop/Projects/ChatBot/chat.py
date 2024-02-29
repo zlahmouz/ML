@@ -97,8 +97,8 @@ if choice=="Login":
         with st.sidebar:
             # Create a sidebar
             st.title('Hello  '+username)
-            username.empty()
-            password.empty()
+            username_input.empty()
+            password_input.empty()
             st.write("---")
             st.sidebar.header("Send your feedback ! ")
             st.sidebar.write("##")
