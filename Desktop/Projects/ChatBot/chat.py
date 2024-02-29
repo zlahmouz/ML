@@ -5,7 +5,7 @@ from streamlit_lottie import st_lottie
 import pickle
 from pathlib import Path
 import hashlib
-
+import time
 # DB Management
 import sqlite3 
 conn = sqlite3.connect('data.db')
@@ -83,6 +83,7 @@ if choice=="Login":
 
     if login_user(username,check_hashes(password,hashed_pswd)):
         x=st.success("Login successful")
+        time.sleep(1)
         x.empty()
         st.markdown("""<h1 style='text-align: center; color: #f63366;'>Chatbot for C code generation</h1>""", unsafe_allow_html=True)
         lottie_coding1 = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
@@ -97,8 +98,6 @@ if choice=="Login":
         with st.sidebar:
             # Create a sidebar
             st.title('Hello  '+username)
-            username_input.empty()
-            password_input.empty()
             st.write("---")
             st.sidebar.header("Send your feedback ! ")
             st.sidebar.write("##")
