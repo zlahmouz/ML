@@ -114,38 +114,20 @@ if choice=="login":
         import streamlit as st
         model_name = "NousResearch/Llama-2-7b-chat-hf"
         import torch
-        from transformers import (
-            AutoTokenizer,
-            AutoModelForCausalLM,
-            BitsAndBytesConfig,
-            pipeline,
-            logging,
-        )
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        # Chemin vers le modèle pré-entraîné
+        chemin_modele = "isma77777/llama-2-7b-test"
+
+        # Charger le tokenizer
+        tokenizer = AutoTokenizer.from_pretrained(chemin_modele)
+
+        # Charger le modèle
+        model= AutoModelForCausalLM.from_pretrained(chemin_modele)
+
+        
 
         # load the quantized settings, we're doing 4 bit quantization
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_use_double_quant=False,
-        )
-
-        # Load base model
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            quantization_config=bnb_config,
-            # use the gpu
-        )
-
-        # don't use the cache
-        model.config.use_cache = False
-
-        model.config.pretraining_tp = 1
-        # Load the tokenizer from the model (llama2)
-        tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, use_fast=False)
-        tokenizer.pad_token = tokenizer.eos_token
-        tokenizer.padding_side = "right"
-        # App title
 
         @st.cache_resource()
         def ChatModel(temperature, top_p):
@@ -183,9 +165,10 @@ if choice=="login":
 
         # Function for generating LLaMA2 response
         def generate_llama2_response(prompt):
-            pipe = pipeline(task="text-generation", model=model, tokenizer=tokenizer, max_length=200)
-            result = pipe(f"<s>[INST] {prompt} [/INST]")
-            return(result[0]['generated_text'])
+            inputs = tokenizer.encode(prompt, return_tensors="pt", max_length=50, truncation=True)
+            outputs = model.generate(inputs, max_length=100, num_return_sequences=1, temperature=0.7)
+            generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+            return(generated_text)
 
         # User-provided prompt
         if prompt := st.chat_input():
