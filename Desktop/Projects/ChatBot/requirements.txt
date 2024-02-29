@@ -1,3 +1,4 @@
+pytorch
 streamlit
 streamlit_lottie
 transformers
