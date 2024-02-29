@@ -84,7 +84,6 @@ if choice=="Login":
     if login_user(username,check_hashes(password,hashed_pswd)):
         x=st.success("Login successful")
         x.empty()
-        choice.empty()
         st.markdown("""<h1 style='text-align: center; color: #f63366;'>Chatbot for C code generation</h1>""", unsafe_allow_html=True)
         lottie_coding1 = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
         lottie_coding2=load_lottieurl("https://lottie.host/f408e134-0f03-454c-9468-0dcb1b64a8a1/X0EptyFKmn.json")
