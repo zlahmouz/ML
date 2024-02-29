@@ -114,28 +114,22 @@ if choice=="login":
         import streamlit as st
         model_name = "NousResearch/Llama-2-7b-chat-hf"
         import torch
-        from transformers import AutoModelForCausalLM, AutoTokenizer
 
         # Chemin vers le modèle pré-entraîné
         chemin_modele = "isma77777/llama-2-7b-test"
 
         # Charger le tokenizer
-        tokenizer = AutoTokenizer.from_pretrained(chemin_modele)
+        from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
         # Charger le modèle
-        model= AutoModelForCausalLM.from_pretrained(chemin_modele)
 
-        
+        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+
+        # Charger le modèle
+        model = GPT2LMHeadModel.from_pretrained("gpt2")
 
         # load the quantized settings, we're doing 4 bit quantization
 
-        @st.cache_resource()
-        def ChatModel(temperature, top_p):
-            return AutoModelForCausalLM.from_pretrained(
-                model_name, 
-                model_type='llama',
-                temperature=temperature, 
-                top_p = top_p)
 
         # Replicate Credentials
         with st.sidebar:
