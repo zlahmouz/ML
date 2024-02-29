@@ -47,6 +47,8 @@ def local_css(file_name):
 ##User authentification
 st.set_page_config(page_title="ProjetLong", page_icon=":tada:", layout="wide")
 choice=st.sidebar.selectbox("select",["login","signup"])
+choice = st.sidebar.radio("Navigation", ["Login", "Signup"])
+
 if choice=="login":
 
   #names=["lahmouz","trevor"]
