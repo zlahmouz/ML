@@ -77,7 +77,7 @@ if choice=="Login":
 
   username=st.sidebar.text_input("username")
   password=st.sidebar.text_input("password",type="password")
-  if st.sidebar.checkbox("login"):
+  if st.sidebar.button("Login"):
     create_usertable()
     hashed_pswd = make_hashes(password)
 
@@ -161,7 +161,7 @@ if choice=="Login":
 if choice=="Signup":
    new_user=st.sidebar.text_input("username")
    new_password=st.sidebar.text_input("password",type="password")
-   if st.sidebar.checkbox("signup"):
+   if st.sidebar.button("Signup"):
       create_usertable()
       add_userdata(new_user,make_hashes(new_password))
       st.success("You have successfully created an account.Go to the Login Menu to login")
