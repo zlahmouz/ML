@@ -117,18 +117,6 @@ if choice=="login":
             # Charger le modèle
         model = GPT2LMHeadModel.from_pretrained("gpt2")
 
-        # Replicate Credentials
-        with st.sidebar:
-            st.title('🦙💬 Llama 2 Chatbot')
-
-            # Refactored from <https://github.com/a16z-infra/llama2-chatbot>
-            st.subheader('Models and parameters')
-            
-            temperature = st.sidebar.slider('temperature', min_value=0.01, max_value=2.0, value=0.1, step=0.01)
-            top_p = st.sidebar.slider('top_p', min_value=0.01, max_value=1.0, value=0.9, step=0.01)
-            # max_length = st.sidebar.slider('max_length', min_value=64, max_value=4096, value=512, step=8)
-            chat_model =model
-            # st.markdown('📖 Learn how to build this app in this [blog](#link-to-blog)!')
 
         # Store LLM generated responses
         if "messages" not in st.session_state.keys():
