@@ -1,35 +1,48 @@
-#https://u3sswjvurlqjnc9g5fwzy5.streamlit.app/
 import streamlit as st
-import requests
+import psycopg2
 from streamlit_lottie import st_lottie
-import pickle
-from pathlib import Path
-import hashlib
+import requests
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
-# DB Management
-import sqlite3 
-conn = sqlite3.connect('data.db')
-c = conn.cursor()
-def create_usertable():
-	c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
+# Fonction pour se connecter à la base de données PostgreSQL
+def connect_db():
+    conn = psycopg2.connect(
+        dbname="wxcqkqvn",
+        user="wxcqkqvn",
+        password="1MmU3atbUECYw4sp3Aq21Xu417JJN9HU",
+        host="flora.db.elephantsql.com"
+    )
+    return conn
 
+# Fonction pour créer la table si elle n'existe pas
+def create_table():
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute('''CREATE TABLE IF NOT EXISTS utilisateurs
+               (id SERIAL PRIMARY KEY,
+               nom VARCHAR(255) NOT NULL,
+               email VARCHAR(255) UNIQUE NOT NULL,
+               mot_de_passe VARCHAR(255) NOT NULL)''')
+    conn.commit()
+    conn.close()
 
-def add_userdata(username,password):
-	c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
-	conn.commit()
+# Fonction pour inscrire un utilisateur
+def signup(nom, email, mot_de_passe):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO utilisateurs (nom, email, mot_de_passe) VALUES (%s, %s, %s)", (nom, email, mot_de_passe))
+    conn.commit()
+    conn.close()
 
-def login_user(username,password):
-	  c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
-	  data = c.fetchall()
-	  return data
+# Fonction pour vérifier les informations de connexion
+def login(email, mot_de_passe):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM utilisateurs WHERE email=%s AND mot_de_passe=%s", (email, mot_de_passe))
+    utilisateur = cur.fetchone()
+    conn.close()
+    return utilisateur
 
-def make_hashes(password):
-	return hashlib.sha256(str.encode(password)).hexdigest()
-
-def check_hashes(password,hashed_text):
-	if make_hashes(password) == hashed_text:
-		return hashed_text
-	return False
 
 def load_lottieurl(url):
     r = requests.get(url)
@@ -39,59 +52,37 @@ def load_lottieurl(url):
 
 
 # Use local CSS
-#def local_css(file_name):
- #   with open(file_name) as f:
-  #      st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+# Création de la table si elle n'existe pas
+create_table()
 
-##User authentification
-st.set_page_config(page_title="ProjetLong", page_icon=":tada:", layout="wide")
-choice=st.sidebar.selectbox("select",["login","signup"])
-if choice=="login":
+# Interface utilisateur avec Streamlit
+st.title("Système de Login/Signup avec PostgreSQL et Streamlit")
 
-  #names=["lahmouz","trevor"]
-  #usernames=["Zlh","pyr"]
-  #passwords=["XXXXXX","XXX"]
-  #load hashed passwords
+action = st.sidebar.selectbox("Action", ["Login", "Signup"])
 
-  #file_path=Path(__file__).parent / "hashed_pw.pkl"
+if action == "Login":
+    st.subheader("Connexion")
+    username=st.text_input("username")
+    email = st.text_input("Email")
+    mot_de_passe = st.text_input("Mot de passe", type="password")
 
-  #with file_path.open("rb") as file :
-  # hashed_passwords=pickle.load(file)
-  #credentials = {"usernames":{}}
-          
-  #for uname,name,pwd in zip(usernames,names,passwords):
-  #   user_dict = {"name": name, "password": pwd}
-    #  credentials["usernames"].update({uname: user_dict})
-          
-  #authenticator = stauth.Authenticate(credentials, "cokkie_name", "random_key", cookie_expiry_days=30)
-
-  #authenticator = stauth.Authenticate(names, usernames, hashed_passwords, "sales_dashboard", "abcdef", cookie_expiry_days=7)
-
-  #name,authentication_status,usernames = authenticator.login()
-
-
-  #if authentication_status ==False:
-  # st.error("erreur username/password")
-
-  username=st.sidebar.text_input("username")
-  password=st.sidebar.text_input("password",type="password")
-  if st.sidebar.checkbox("login"):
-    create_usertable()
-    hashed_pswd = make_hashes(password)
-
-    if login_user(username,check_hashes(password,hashed_pswd)):
-        st.success("Login successful")
-        st.title('Chatbot for C code generation')
+    if st.button("Se connecter"):
+        utilisateur = login(email, mot_de_passe)
+        if utilisateur:
+            st.success(f"Connecté en tant que {utilisateur[1]}")
+            st.title('Chatbot for C code generation')
         lottie_coding = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
         st_lottie(lottie_coding, height=300, key="coding")
 
 
         with st.sidebar:
             # Create a sidebar
-            st.title('Info')
-            st.write("---")
-            st.sidebar.header("Get In Touch With Me!")
+            st.title("Hello "+ username)
+            st.sidebar.header("Send your feedback to enhance the application")
             st.sidebar.write("##")
 
             contact_form = """
@@ -104,22 +95,14 @@ if choice=="login":
             </form>
             """
             st.markdown(contact_form, unsafe_allow_html=True)
-            #local_css("style.css")
+            local_css("style.css")
 
             # Add logout button to the sidebar
             
                 #st.warning("You have logged out.")
                 # Add logout logic here (e.g., redirect to login page, clear session data, etc.)
             #authenticator.logout("Logout","sidebar")
-        import streamlit as st
-        model_name = "NousResearch/Llama-2-7b-chat-hf"
-        import torch
-
-        # Chemin vers le modèle pré-entraîné
-        chemin_modele = "isma77777/llama-2-7b-test"
-
-        # Charger le tokenizer
-        from transformers import GPT2LMHeadModel, GPT2Tokenizer
+        
 
         # Charger le modèle
 
@@ -130,11 +113,11 @@ if choice=="login":
 
         # load the quantized settings, we're doing 4 bit quantization
 
-        from transformers import AutoModelForCausalLM, AutoTokenizer
+        #from transformers import AutoModelForCausalLM, AutoTokenizer
 
         # Charger le tokenizer et le modèle DialoGPT
-        tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
-        model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
+        #tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
+        #model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
         # Replicate Credentials
        
 
@@ -177,15 +160,17 @@ if choice=="login":
                     placeholder.markdown(full_response)
             message = {"role": "assistant", "content": full_response}
             st.session_state.messages.append(message)
-if choice=="signup":
-   new_user=st.sidebar.text_input("username")
-   new_password=st.sidebar.text_input("password",type="password")
-   if st.sidebar.checkbox("signup"):
-      create_usertable()
-      add_userdata(new_user,make_hashes(new_password))
-      st.success("You have successfully created an account.Go to the Login Menu to login")
+            
+            
+        else:
+            st.error("Email ou mot de passe incorrect")
 
+elif action == "Signup":
+    st.subheader("Inscription")
+    nom = st.text_input("username")
+    email = st.text_input("Email")
+    mot_de_passe = st.text_input("Mot de passe", type="password")
 
-
-
-      
+    if st.button("S'inscrire"):
+        signup(nom, email, mot_de_passe)
+        st.success("Inscription réussie. Vous pouvez maintenant vous connecter.")
