@@ -89,9 +89,9 @@ if choice=="login":
 
         with st.sidebar:
             # Create a sidebar
-            st.title('Info')
+            st.title('Hello'+username)
             st.write("---")
-            st.sidebar.header("Get In Touch With Me!")
+            st.sidebar.header("Send your feedback ! ")
             st.sidebar.write("##")
 
             contact_form = """
