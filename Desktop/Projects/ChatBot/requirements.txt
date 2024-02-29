@@ -5,3 +5,4 @@ transformers
 accelerate
 bitsandbytes
 ctransformers
+psycopg2-binary
