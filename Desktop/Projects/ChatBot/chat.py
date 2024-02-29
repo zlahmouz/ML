@@ -89,7 +89,7 @@ if choice=="login":
 
         with st.sidebar:
             # Create a sidebar
-            st.title('Hello'+username)
+            st.title('Hello  '+username)
             st.write("---")
             st.sidebar.header("Send your feedback ! ")
             st.sidebar.write("##")
