@@ -75,15 +75,15 @@ if action == "Login":
         if utilisateur:
             st.success(f"Connecté en tant que {utilisateur[1]}")
             st.title('Chatbot for C code generation')
-        lottie_coding = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
-        st_lottie(lottie_coding, height=300, key="coding")
+            lottie_coding = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
+            st_lottie(lottie_coding, height=300, key="coding")
 
 
-        with st.sidebar:
-            # Create a sidebar
-            st.title("Hello "+ username)
-            st.sidebar.header("Send your feedback to enhance the application")
-            st.sidebar.write("##")
+            with st.sidebar:
+                # Create a sidebar
+                st.title("Hello "+ username)
+                st.sidebar.header("Send your feedback to enhance the application")
+                st.sidebar.write("##")
 
             contact_form = """
             <form action="https://formsubmit.co/zakarialahmouz@gmail.com" method="POST">
@@ -104,64 +104,63 @@ if action == "Login":
             #authenticator.logout("Logout","sidebar")
         
 
-        # Charger le modèle
+            # Charger le modèle
 
-        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+            tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 
-        # Charger le modèle
-        model = GPT2LMHeadModel.from_pretrained("gpt2")
+            # Charger le modèle
+            model = GPT2LMHeadModel.from_pretrained("gpt2")
 
-        # load the quantized settings, we're doing 4 bit quantization
+            # load the quantized settings, we're doing 4 bit quantization
 
-        #from transformers import AutoModelForCausalLM, AutoTokenizer
+            #from transformers import AutoModelForCausalLM, AutoTokenizer
 
-        # Charger le tokenizer et le modèle DialoGPT
-        #tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
-        #model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
-        # Replicate Credentials
-       
+            # Charger le tokenizer et le modèle DialoGPT
+            #tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
+            #model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
+            # Replicate Credentials
+        
 
-        # Store LLM generated responses
-        if "messages" not in st.session_state.keys():
-            st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+            # Store LLM generated responses
+            if "messages" not in st.session_state.keys():
+                st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
-        # Display or clear chat messages
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.write(message["content"])
+            # Display or clear chat messages
+            for message in st.session_state.messages:
+                with st.chat_message(message["role"]):
+                    st.write(message["content"])
 
-        def clear_chat_history():
-            st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
-        st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
+            def clear_chat_history():
+                st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+            st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
 
-        # Function for generating LLaMA2 response
-        def generate_llama2_response(prompt):
-            inputs = tokenizer.encode(prompt, return_tensors="pt", max_length=50, truncation=True)
-            outputs = model.generate(inputs, max_length=100, num_return_sequences=1, temperature=0.7)
-            generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-            return(generated_text)
+            # Function for generating LLaMA2 response
+            def generate_llama2_response(prompt):
+                inputs = tokenizer.encode(prompt, return_tensors="pt", max_length=50, truncation=True)
+                outputs = model.generate(inputs, max_length=100, num_return_sequences=1, temperature=0.7)
+                generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                return(generated_text)
 
-        # User-provided prompt
-        if prompt := st.chat_input():
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user"):
-                st.write(prompt)
+            # User-provided prompt
+            if prompt := st.chat_input():
+                st.session_state.messages.append({"role": "user", "content": prompt})
+                with st.chat_message("user"):
+                    st.write(prompt)
 
-        # Generate a new response if last message is not from assistant
-        if st.session_state.messages[-1]["role"] != "assistant":
-            with st.chat_message("assistant"):
-                with st.spinner("Thinking..."):
-                    response = generate_llama2_response(prompt)
-                    placeholder = st.empty()
-                    full_response = ''
-                    for item in response:
-                        full_response += item
+            # Generate a new response if last message is not from assistant
+            if st.session_state.messages[-1]["role"] != "assistant":
+                with st.chat_message("assistant"):
+                    with st.spinner("Thinking..."):
+                        response = generate_llama2_response(prompt)
+                        placeholder = st.empty()
+                        full_response = ''
+                        for item in response:
+                            full_response += item
+                            placeholder.markdown(full_response)
                         placeholder.markdown(full_response)
-                    placeholder.markdown(full_response)
-            message = {"role": "assistant", "content": full_response}
-            st.session_state.messages.append(message)
-            
-            
+                message = {"role": "assistant", "content": full_response}
+                st.session_state.messages.append(message)
+                    
         else:
             st.error("Email ou mot de passe incorrect")
 
