@@ -52,9 +52,9 @@ def load_lottieurl(url):
 
 
 # Use local CSS
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+#def local_css(file_name):
+ #   with open(file_name) as f:
+  #      st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Création de la table si elle n'existe pas
 create_table()
@@ -95,7 +95,7 @@ if action == "Login":
             </form>
             """
             st.markdown(contact_form, unsafe_allow_html=True)
-            local_css("style.css")
+            #local_css("style.css")
 
             # Add logout button to the sidebar
             
