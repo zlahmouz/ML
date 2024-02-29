@@ -1,8 +1,4 @@
-torch==2.2.1
 streamlit
 streamlit_lottie
 transformers
-accelerate
-bitsandbytes
-ctransformers
 psycopg2-binary
