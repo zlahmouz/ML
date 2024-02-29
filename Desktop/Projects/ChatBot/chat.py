@@ -2,7 +2,6 @@ import streamlit as st
 import psycopg2
 from streamlit_lottie import st_lottie
 import requests
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 # Fonction pour se connecter à la base de données PostgreSQL
 def connect_db():
@@ -85,16 +84,16 @@ if action == "Login":
                 st.sidebar.header("Send your feedback to enhance the application")
                 st.sidebar.write("##")
 
-            contact_form = """
-            <form action="https://formsubmit.co/zakarialahmouz@gmail.com" method="POST">
-                <input type="hidden" name="_captcha" value="false">
-                <input type="text" name="name" placeholder="Your name" required>
-                <input type="email" name="email" placeholder="Your email" required>
-                <textarea name="message" placeholder="Your message here" required></textarea>
-                <button type="submit">Send</button>
-            </form>
-            """
-            st.markdown(contact_form, unsafe_allow_html=True)
+                contact_form = """
+                <form action="https://formsubmit.co/zakarialahmouz@gmail.com" method="POST">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="text" name="name" placeholder="Your name" required>
+                    <input type="email" name="email" placeholder="Your email" required>
+                    <textarea name="message" placeholder="Your message here" required></textarea>
+                    <button type="submit">Send</button>
+                </form>
+                """
+                st.markdown(contact_form, unsafe_allow_html=True)
             #local_css("style.css")
 
             # Add logout button to the sidebar
@@ -105,7 +104,7 @@ if action == "Login":
         
 
             # Charger le modèle
-
+            from transformers import GPT2LMHeadModel, GPT2Tokenizer
             tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 
             # Charger le modèle
