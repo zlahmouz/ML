@@ -84,6 +84,7 @@ if choice=="Login":
     if login_user(username,check_hashes(password,hashed_pswd)):
         x=st.success("Login successful")
         x.empty()
+        choice.empty()
         st.markdown("""<h1 style='text-align: center; color: #f63366;'>Chatbot for C code generation</h1>""", unsafe_allow_html=True)
         lottie_coding1 = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
         lottie_coding2=load_lottieurl("https://lottie.host/f408e134-0f03-454c-9468-0dcb1b64a8a1/X0EptyFKmn.json")
@@ -97,6 +98,8 @@ if choice=="Login":
         with st.sidebar:
             # Create a sidebar
             st.title('Hello  '+username)
+            username.empty()
+            password.empty()
             st.write("---")
             st.sidebar.header("Send your feedback ! ")
             st.sidebar.write("##")
@@ -137,7 +140,6 @@ if choice=="Login":
         def clear_chat_history():
             st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
         st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
-
         # Function for generating LLaMA2 response
         def generate_llama2_response(prompt):
             inputs = tokenizer.encode(prompt, return_tensors="pt", max_length=50, truncation=True)
