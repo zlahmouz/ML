@@ -88,12 +88,14 @@ if choice=="Login":
         st.markdown("""<h1 style='text-align: center; color: #f63366;'>Chatbot for C code generation</h1>""", unsafe_allow_html=True)
         lottie_coding1 = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
         lottie_coding2=load_lottieurl("https://lottie.host/f408e134-0f03-454c-9468-0dcb1b64a8a1/X0EptyFKmn.json")
-        col1,col2=st.columns(2)
+        lottie_coding3=load_lottieurl("https://lottie.host/62c6ff04-774a-4817-8320-3887ca6b0b09/3HrubUT7AR.json")
+        col1,col2,col3=st.columns(3)
         with col1:
             st_lottie(lottie_coding2,height=250,key="co")
         with col2:
             st_lottie(lottie_coding1, height=250, key="coding")
-
+        with col3:
+            st_lottie(lottie_coding3,height=250,key="c")
 
         with st.sidebar:
             # Create a sidebar
