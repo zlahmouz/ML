@@ -39,9 +39,9 @@ def load_lottieurl(url):
 
 
 # Use local CSS
-#def local_css(file_name):
- #   with open(file_name) as f:
-  #      st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
 ##User authentification
@@ -104,7 +104,7 @@ if choice=="login":
             </form>
             """
             st.markdown(contact_form, unsafe_allow_html=True)
-            #local_css("style.css")
+            local_css("Desktop/Projects/ChatBot/style.css")
 
             # Add logout button to the sidebar
             
