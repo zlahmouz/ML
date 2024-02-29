@@ -46,10 +46,9 @@ def local_css(file_name):
 
 ##User authentification
 st.set_page_config(page_title="ProjetLong", page_icon=":tada:", layout="wide")
-choice=st.sidebar.selectbox("select",["login","signup"])
 choice = st.sidebar.radio("Navigation", ["Login", "Signup"])
 
-if choice=="login":
+if choice=="Login":
 
   #names=["lahmouz","trevor"]
   #usernames=["Zlh","pyr"]
@@ -159,7 +158,7 @@ if choice=="login":
                     placeholder.markdown(full_response)
             message = {"role": "assistant", "content": full_response}
             st.session_state.messages.append(message)
-if choice=="signup":
+if choice=="Signup":
    new_user=st.sidebar.text_input("username")
    new_password=st.sidebar.text_input("password",type="password")
    if st.sidebar.checkbox("signup"):
