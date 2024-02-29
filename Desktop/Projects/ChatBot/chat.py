@@ -84,8 +84,13 @@ if choice=="Login":
     if login_user(username,check_hashes(password,hashed_pswd)):
         st.success("Login successful")
         st.title('Chatbot for C code generation')
-        lottie_coding = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
-        st_lottie(lottie_coding, height=300, key="coding")
+        lottie_coding1 = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
+        lottie_coding2=load_lottieurl("https://lottie.host/f408e134-0f03-454c-9468-0dcb1b64a8a1/X0EptyFKmn.json")
+        col1,col2=st.columns(2)
+        with col1:
+            st_lottie(lottie_coding2,height=150,key="co")
+        with col2:
+            st_lottie(lottie_coding1, height=150, key="coding")
 
 
         with st.sidebar:
