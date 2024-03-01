@@ -85,12 +85,13 @@ if choice=="Login":
   # st.error("erreur username/password")
 
   username=st.sidebar.text_input("username")
+  email=st.sidebar.text_input("email")
   password=st.sidebar.text_input("password",type="password")
   if st.sidebar.button("Login"):
     create_usertable()
     hashed_pswd = make_hashes(password)
 
-    if login_user(username,check_hashes(password,hashed_pswd)):
+    if login_user(username,email,check_hashes(password,hashed_pswd)):
         x=st.success("Login successful")
         time.sleep(1)
         x.empty()
@@ -177,10 +178,11 @@ if choice=="Login":
             st.session_state.messages.append(message)
 if choice=="Signup":
    new_user=st.sidebar.text_input("username")
+   new_email=st.sidebar.text_input("email")
    new_password=st.sidebar.text_input("password",type="password")
    if st.sidebar.button("Signup"):
       create_usertable()
-      add_userdata(new_user,make_hashes(new_password))
+      add_userdata(new_user,new_email,make_hashes(new_password))
       st.success("You have successfully created an account.Go to the Login Menu to login")
 
 
