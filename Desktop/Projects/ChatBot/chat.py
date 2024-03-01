@@ -24,13 +24,13 @@ def create_usertable():
                mot_de_passe VARCHAR(255) NOT NULL)''')
 
 def add_userdata(nom,email,password):
-    c.execute("INSERT INTO utilisateurs (nom, email, mot_de_passe) VALUES (%s, %s, %s)", (nom, email,password))
-	conn.commit()
+   c.execute("INSERT INTO utilisateurs (nom, email, mot_de_passe) VALUES (%s, %s, %s)", (nom, email,password))
+   conn.commit()
 
 def login_user(nom,email,password):
-    c.execute("SELECT * FROM utilisateurs WHERE nom=%s  AND email=%s AND mot_de_passe=%s", (nom,email,password))
-	data = c.fetchall()
-	return data
+   c.execute("SELECT * FROM utilisateurs WHERE nom=%s  AND email=%s AND mot_de_passe=%s", (nom,email,password))
+   data = c.fetchall()
+   return data
 
 def make_hashes(password):
 	return hashlib.sha256(str.encode(password)).hexdigest()
