@@ -7,22 +7,29 @@ from pathlib import Path
 import hashlib
 import time
 # DB Management
-import sqlite3 
-conn = sqlite3.connect('data.db')
+import psycopg2
+conn = psycopg2.connect(
+        dbname="wxcqkqvn",
+        user="wxcqkqvn",
+        password="1MmU3atbUECYw4sp3Aq21Xu417JJN9HU",
+        host="flora.db.elephantsql.com"
+    )
 c = conn.cursor()
 def create_usertable():
-	c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
+    c.execute('''CREATE TABLE IF NOT EXISTS utilisateurs
+               (id SERIAL PRIMARY KEY,
+               nom VARCHAR(255) NOT NULL,
+               email VARCHAR(255) UNIQUE NOT NULL,
+               mot_de_passe VARCHAR(255) NOT NULL)''')
 
+def add_userdata(nom,email,password):
+   c.execute("INSERT INTO utilisateurs (nom, email, mot_de_passe) VALUES (%s, %s, %s)", (nom, email,password))
+   conn.commit()
 
-def add_userdata(username,password):
-	c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
-	conn.commit()
-
-def login_user(username,password):
-	c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
-	data = c.fetchall()
-	return data
-
+def login_user(nom,email,password):
+   c.execute("SELECT * FROM utilisateurs WHERE nom=%s  AND email=%s AND mot_de_passe=%s", (nom,email,password))
+   data = c.fetchall()
+   return data
 def make_hashes(password):
 	return hashlib.sha256(str.encode(password)).hexdigest()
 
@@ -37,53 +44,14 @@ def load_lottieurl(url):
         return None
     return r.json()
 
-
-# Use local CSS
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-
-##User authentification
-st.set_page_config(page_title="ProjetLong", page_icon=":tada:", layout="wide")
-choice = st.sidebar.radio("Navigation", ["Login", "Signup"])
-
-if choice=="Login":
-
-  #names=["lahmouz","trevor"]
-  #usernames=["Zlh","pyr"]
-  #passwords=["XXXXXX","XXX"]
-  #load hashed passwords
-
-  #file_path=Path(__file__).parent / "hashed_pw.pkl"
-
-  #with file_path.open("rb") as file :
-  # hashed_passwords=pickle.load(file)
-  #credentials = {"usernames":{}}
-          
-  #for uname,name,pwd in zip(usernames,names,passwords):
-  #   user_dict = {"name": name, "password": pwd}
-    #  credentials["usernames"].update({uname: user_dict})
-          
-  #authenticator = stauth.Authenticate(credentials, "cokkie_name", "random_key", cookie_expiry_days=30)
-
-  #authenticator = stauth.Authenticate(names, usernames, hashed_passwords, "sales_dashboard", "abcdef", cookie_expiry_days=7)
-
-  #name,authentication_status,usernames = authenticator.login()
-
-
-  #if authentication_status ==False:
-  # st.error("erreur username/password")
-
-  username=st.sidebar.text_input("username")
-  password=st.sidebar.text_input("password",type="password")
-  if st.sidebar.button("Login"):
+def login():
     create_usertable()
     hashed_pswd = make_hashes(password)
 
-    if login_user(username,check_hashes(password,hashed_pswd)):
+    if login_user(username,email,check_hashes(password,hashed_pswd)):
+        
         x=st.success("Login successful")
-        time.sleep(1)
+        time.sleep(2)
         x.empty()
         st.markdown("""<h1 style='text-align: center; color: #f63366;'>Chatbot for C code generation</h1>""", unsafe_allow_html=True)
         lottie_coding1 = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
@@ -96,6 +64,8 @@ if choice=="Login":
             st_lottie(lottie_coding1, height=250, key="coding")
         with col3:
             st_lottie(lottie_coding3,height=250,key="c")
+
+
 
         with st.sidebar:
             # Create a sidebar
@@ -140,12 +110,14 @@ if choice=="Login":
         def clear_chat_history():
             st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
         st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
+
         # Function for generating LLaMA2 response
         def generate_llama2_response(prompt):
             inputs = tokenizer.encode(prompt, return_tensors="pt", max_length=50, truncation=True)
             outputs = model.generate(inputs, max_length=100, num_return_sequences=1, temperature=0.7)
             generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
             return(generated_text)
+
 
         # User-provided prompt
         if prompt := st.chat_input():
@@ -166,12 +138,29 @@ if choice=="Login":
                     placeholder.markdown(full_response)
             message = {"role": "assistant", "content": full_response}
             st.session_state.messages.append(message)
+# Use local CSS
+def local_css(file_name):
+    with open(file_name) as f:
+       st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+
+##User authentification
+st.set_page_config(page_title="ProjetLong", page_icon=":tada:", layout="wide")
+choice = st.sidebar.radio("Navigation", ["Login", "Signup"])
+if choice=="Login":
+  username=st.sidebar.text_input("username")
+  email=st.sidebar.text_input("email")
+  password=st.sidebar.text_input("password",type="password")
+  if st.sidebar.checkbox("Login"):
+      login()
+
 if choice=="Signup":
    new_user=st.sidebar.text_input("username")
+   new_email=st.sidebar.text_input("email")
    new_password=st.sidebar.text_input("password",type="password")
    if st.sidebar.button("Signup"):
       create_usertable()
-      add_userdata(new_user,make_hashes(new_password))
+      add_userdata(new_user,new_email,make_hashes(new_password))
       st.success("You have successfully created an account.Go to the Login Menu to login")
 
 
