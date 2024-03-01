@@ -8,29 +8,20 @@ import hashlib
 import time
 # DB Management
 import sqlite3 
-import psycopg2
-conn = psycopg2.connect(
-        dbname="wxcqkqvn",
-        user="wxcqkqvn",
-        password="1MmU3atbUECYw4sp3Aq21Xu417JJN9HU",
-        host="flora.db.elephantsql.com"
-    )
+conn = sqlite3.connect('data.db')
 c = conn.cursor()
 def create_usertable():
-    c.execute('''CREATE TABLE IF NOT EXISTS utilisateurs
-               (id SERIAL PRIMARY KEY,
-               nom VARCHAR(255) NOT NULL,
-               email VARCHAR(255) UNIQUE NOT NULL,
-               mot_de_passe VARCHAR(255) NOT NULL)''')
+	c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
 
-def add_userdata(nom,email,password):
-   c.execute("INSERT INTO utilisateurs (nom, email, mot_de_passe) VALUES (%s, %s, %s)", (nom, email,password))
-   conn.commit()
 
-def login_user(nom,email,password):
-   c.execute("SELECT * FROM utilisateurs WHERE nom=%s  AND email=%s AND mot_de_passe=%s", (nom,email,password))
-   data = c.fetchall()
-   return data
+def add_userdata(username,password):
+	c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
+	conn.commit()
+
+def login_user(username,password):
+	c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
+	data = c.fetchall()
+	return data
 
 def make_hashes(password):
 	return hashlib.sha256(str.encode(password)).hexdigest()
@@ -85,13 +76,12 @@ if choice=="Login":
   # st.error("erreur username/password")
 
   username=st.sidebar.text_input("username")
-  email=st.sidebar.text_input("email")
   password=st.sidebar.text_input("password",type="password")
   if st.sidebar.button("Login"):
     create_usertable()
     hashed_pswd = make_hashes(password)
 
-    if login_user(username,email,check_hashes(password,hashed_pswd)):
+    if login_user(username,check_hashes(password,hashed_pswd)):
         x=st.success("Login successful")
         time.sleep(1)
         x.empty()
@@ -178,11 +168,10 @@ if choice=="Login":
             st.session_state.messages.append(message)
 if choice=="Signup":
    new_user=st.sidebar.text_input("username")
-   new_email=st.sidebar.text_input("email")
    new_password=st.sidebar.text_input("password",type="password")
    if st.sidebar.button("Signup"):
       create_usertable()
-      add_userdata(new_user,new_email,make_hashes(new_password))
+      add_userdata(new_user,make_hashes(new_password))
       st.success("You have successfully created an account.Go to the Login Menu to login")
 
 
