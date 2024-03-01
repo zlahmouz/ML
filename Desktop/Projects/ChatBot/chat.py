@@ -8,20 +8,29 @@ import hashlib
 import time
 # DB Management
 import sqlite3 
-conn = sqlite3.connect('data.db')
+import psycopg2
+conn = psycopg2.connect(
+        dbname="wxcqkqvn",
+        user="wxcqkqvn",
+        password="1MmU3atbUECYw4sp3Aq21Xu417JJN9HU",
+        host="flora.db.elephantsql.com"
+    )
 c = conn.cursor()
 def create_usertable():
-	c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
+    c.execute('''CREATE TABLE IF NOT EXISTS utilisateurs
+               (id SERIAL PRIMARY KEY,
+               nom VARCHAR(255) NOT NULL,
+               email VARCHAR(255) UNIQUE NOT NULL,
+               mot_de_passe VARCHAR(255) NOT NULL)''')
 
-
-def add_userdata(username,password):
-	c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
+def add_userdata(nom,email,password):
+    c.execute("INSERT INTO utilisateurs (nom, email, mot_de_passe) VALUES (%s, %s, %s)", (nom, email,password))
 	conn.commit()
 
-def login_user(username,password):
-	  c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
-	  data = c.fetchall()
-	  return data
+def login_user(nom,email,password):
+    c.execute("SELECT * FROM utilisateurs WHERE nom=%s  AND email=%s AND mot_de_passe=%s", (nom,email,password))
+	data = c.fetchall()
+	return data
 
 def make_hashes(password):
 	return hashlib.sha256(str.encode(password)).hexdigest()
