@@ -84,8 +84,8 @@ def login():
             </form>
             """
             st.markdown(contact_form, unsafe_allow_html=True)
-            #local_css("Desktop/Projects/ChatBot/style.css")
-            local_css("style.css")
+            local_css("Desktop/Projects/ChatBot/style.css")
+            #local_css("style.css")
             # Add logout button to the sidebar
             
                 #st.warning("You have logged out.")
