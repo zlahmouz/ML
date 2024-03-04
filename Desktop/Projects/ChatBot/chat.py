@@ -51,7 +51,6 @@ def login():
     if login_user(username,email,check_hashes(password,hashed_pswd)):
         
         x=st.success("Login successful")
-        time.sleep(2)
         x.empty()
         st.markdown("""<h1 style='text-align: center; color: #f63366;'>Chatbot for C code generation</h1>""", unsafe_allow_html=True)
         lottie_coding1 = load_lottieurl("https://lottie.host/d86275a4-8cc5-4463-a8d1-03071f02f7ee/UnwrqECWFD.json")
