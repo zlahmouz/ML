@@ -1,12 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for
 from torchvision import transforms
 from PIL import Image
 import io
 
-# Définir le modèle CNN (comme dans l'entraînement)
+ # Définir le modèle CNN (comme dans l'entraînement)
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
@@ -40,26 +40,23 @@ transform = transforms.Compose([
 ])
 
 # Route pour l'API de prédiction
-@app.route('/predict', methods=['POST'])
-def predict():
-    # Récupérer l'image à partir de la requête
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
 
-    file = request.files['file']
-    img = Image.open(io.BytesIO(file.read()))
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            return redirect(request.url)
+        if file:
+            img = Image.open(io.BytesIO(file.read()))
+            img = transform(img).unsqueeze(0)  # Ajouter une dimension batch
+            
+            # Faire la prédiction
+            with torch.no_grad():
+                output = model(img)
+                pred = output.argmax(dim=1, keepdim=True)
+                return render_template('result.html', prediction=pred.item())
+    return render_template('index.html')
 
-    # Prétraitement de l'image
-    img = transform(img).unsqueeze(0)  # Ajouter une dimension de batch
-
-    # Faire la prédiction avec le modèle
-    with torch.no_grad():
-        output = model(img)
-        predicted_digit = output.argmax(dim=1, keepdim=True).item()
-
-    # Retourner la prédiction sous forme de JSON
-    return jsonify({'prediction': predicted_digit})
-
-# Lancer le serveur Flask
-if __name__ == '__main__':
-    app.run(debug=True)
