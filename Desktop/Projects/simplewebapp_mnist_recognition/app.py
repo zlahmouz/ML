@@ -25,7 +25,9 @@ class CNN(nn.Module):
 
 # Charger le modèle sauvegardé
 model = CNN()
-model.load_state_dict(torch.load('C:\\Users\\33665\\Desktop\\Projects\\simplewebapp_mnist_recognition\\mnist_cnn.pth'))
+model.load_state_dict(torch.load("mnist_cnn.pth", map_location=torch.device('cpu')))
+#model.load_state_dict(torch.load("mnist_cnn.pth"))
+
 model.eval()
 
 # Définir l'application Flask
@@ -59,4 +61,3 @@ def index():
                 pred = output.argmax(dim=1, keepdim=True)
                 return render_template('result.html', prediction=pred.item())
     return render_template('index.html')
-
