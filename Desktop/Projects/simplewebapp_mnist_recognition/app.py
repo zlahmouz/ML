@@ -1,12 +1,16 @@
+# app.py
+from flask import Flask, request, render_template, jsonify
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from flask import Flask, render_template, request, redirect, url_for
 from torchvision import transforms
 from PIL import Image
 import io
 
- # Définir le modèle CNN (comme dans l'entraînement)
+app = Flask(__name__)
+
+
+# Définition de la classe CNN
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
@@ -23,41 +27,39 @@ class CNN(nn.Module):
         x = self.fc2(x)
         return F.log_softmax(x, dim=1)
 
-# Charger le modèle sauvegardé
-model = CNN()
-model.load_state_dict(torch.load("mnist_cnn.pth", map_location=torch.device('cpu')))
-#model.load_state_dict(torch.load("mnist_cnn.pth"))
 
+# Chargement du modèle
+model = CNN()
+model.load_state_dict(torch.load('mnist_cnn.pth', map_location=torch.device('cpu')))
 model.eval()
 
-# Définir l'application Flask
-app = Flask(__name__)
-
-# Transformation de l'image (identique à l'entraînement)
+# Prétraitement de l'image
 transform = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
     transforms.Resize((28, 28)),
     transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))
+    transforms.Normalize((0.1307,), (0.3081,))
 ])
 
-# Route pour l'API de prédiction
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        if 'file' not in request.files:
-            return redirect(request.url)
+        # Gérer le téléchargement de l'image et la prédiction
         file = request.files['file']
-        if file.filename == '':
-            return redirect(request.url)
-        if file:
-            img = Image.open(io.BytesIO(file.read()))
-            img = transform(img).unsqueeze(0)  # Ajouter une dimension batch
-            
-            # Faire la prédiction
-            with torch.no_grad():
-                output = model(img)
-                pred = output.argmax(dim=1, keepdim=True)
-                return render_template('result.html', prediction=pred.item())
+        img = Image.open(io.BytesIO(file.read())).convert('L')
+        img_tensor = transform(img).unsqueeze(0)
+
+        with torch.no_grad():
+            output = model(img_tensor)
+
+        prob = torch.exp(output)
+        _, predicted = torch.max(output.data, 1)
+        digit = predicted.item()
+        confidence = prob[0][digit].item()
+
+        return jsonify({'digit': int(digit), 'confidence': float(confidence)})
     return render_template('index.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

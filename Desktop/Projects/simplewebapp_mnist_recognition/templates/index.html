@@ -1,54 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNIST Digit Classifier</title>
+    <title>MNIST Predictor (PyTorch)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
         .container {
             background-color: white;
-            padding: 30px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            text-align: center;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1 {
-            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
         }
-        input[type="file"] {
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
             margin-bottom: 20px;
-        }
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
         }
-        input[type="submit"]:hover {
-            background-color: #45a049;
+        .upload-area:hover {
+            background-color: #f9f9f9;
+        }
+        #imagePreview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+        }
+        #result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Upload a Digit Image</h1>
-        <form action="/" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" required>
-            <br>
-            <input type="submit" value="Classify Image">
-        </form>
+        <h1>MNIST Digit Predictor (PyTorch CNN)</h1>
+        <div class="upload-area" id="dropZone">
+            <p>Cliquez ici ou déposez une image pour la prédiction</p>
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+            <img id="imagePreview" src="" alt="Image preview" style="display: none;">
+        </div>
+        <div id="result"></div>
+        <div class="chart-container">
+            <canvas id="probabilityChart"></canvas>
+        </div>
     </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+        const result = document.getElementById('result');
+        let chart;
+
+        dropZone.onclick = () => imageUpload.click();
+
+        dropZone.ondragover = (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#999';
+        };
+
+        dropZone.ondragleave = () => {
+            dropZone.style.borderColor = '#ccc';
+        };
+
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ccc';
+            imageUpload.files = e.dataTransfer.files;
+            handleImage();
+        };
+
+        imageUpload.onchange = handleImage;
+
+        function handleImage() {
+            const file = imageUpload.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    predict(file);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function predict(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                result.textContent = `Chiffre prédit: ${data.digit}, Confiance: ${(data.confidence * 100).toFixed(2)}%`;
+                updateChart(data.probabilities);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                result.textContent = 'Une erreur s\'est produite lors de la prédiction.';
+            });
+        }
+
+        function updateChart(probabilities) {
+            if (chart) {
+                chart.destroy();
+            }
+
+            const ctx = document.getElementById('probabilityChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                    datasets: [{
+                        label: 'Probabilité',
+                        data: probabilities,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>

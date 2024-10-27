@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/simplewebapp_mnist_recognition.iml" filepath="$PROJECT_DIR$/.idea/simplewebapp_mnist_recognition.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/simple_digitRecognition_webapp.iml" filepath="$PROJECT_DIR$/.idea/simple_digitRecognition_webapp.iml" />
     </modules>
   </component>
 </project>
